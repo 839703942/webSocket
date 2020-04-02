@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+<style>
+    body{
+        background:url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584084390525&di=9472386ec0b5ea10a78fc486301bf140&imgtype=0&src=http%3A%2F%2Fimage3.cnpp.cn%2Fupload2%2Fnews%2F20120412%2F161403_49208_url.jpg") no-repeat;
+        background-size: 100%;
+    }
+    html,body{
+        width:100%;
+        height:100%
+    }
+    #content{
+        padding-top: 100px;
+        padding-left: 1px;
+        padding-right: 0px;
+        margin-top: -3px;
+        width: 449px;
+        height: 13px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        border: 2px solid #4252f9;
+        background: transparent;
+
+    }
+    #contentDiv{
+        width: 450px;
+        height: 0px;
+        margin-bottom: 290px;
+    }
+    #messageDiv{
+        width: 450px;
+        height: 250px;
+        background:transparent;
+        overflow-y: auto;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        border:2px solid #4252f9;
+        margin-bottom: -1px;
+        word-wrap: break-word;
+    }
+    #div1{
+        height: 370px;
+        background-color:transparent ;
+        width: 450px;
+        border-radius: 5px;
+    }
+    #out{
+        margin-left: 95%;
+        background-color: transparent;
+    }
+    #fileImgDiv{
+        width: 450px;
+        border:2px solid #4252f9;
+    }
+    #fileImg{
+        width: 0px;
+    }
+    #label1{
+        background-color: rgb(90, 152, 222);
+        border-radius: 5px;
+        margin-right: 378px;
+    }
+    li{
+        list-style: none;
+    }
+    .liName{
+        margin-left: 350px
+    }
+    .liNameThe{
+        margin-right: 350px;
+    }
+    .liContentThe{
+        margin-left: 68px;
+        margin-right: 100px;
+        background-size: auto;
+        background-color: #77cbff;
+        border-top-right-radius:10px;
+        border-bottom-right-radius:10px;
+        border-bottom-left-radius:10px;
+    }
+    .liContent{
+        margin-left: 100px;
+        margin-right: 68px;
+        background-size: auto;
+        background-color: #77cbff;
+        border-top-left-radius:10px;
+        border-bottom-right-radius:10px;
+        border-bottom-left-radius:10px;
+    }
+    .imgLi{
+        height: 100px;
+        width: 200px;
+    }
+    #imageClick{
+        z-index: 100;
+        background-size: auto;
+        position: absolute;
+        align-content: center;
+        margin-left: auto;
+    }
+    img{
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+
+    }
+</style>
+<body onload="">
+   <div align="center" >
+       <div id="imageClick"></div>
+       <input  id="out" value="注销" type="button"><br>
+       请输入聊天室名称<br>
+       <input id="username" type="text" name="username"><br>
+       聊天记录<br>
+       <div id="div1">
+           <div id="messageDiv">
+               <ul id="messageDivLi">
+
+               </ul>
+           </div>
+           <div id="fileImgDiv">
+               <input id="fileImg" type="file"  accept="image/*">
+               <label id="label1" for="fileImg">上传图片</label>
+           </div>
+           <div id="contentDiv">
+               <textarea id="content" type="text" name="content" size="65"></textarea>
+           </div>
+       </div>
+       <br>
+       <br>
+       <div>
+           <input id="reply" type="button" name="reply" value="发送">
+           <input id="user" type="button" value="连接">
+           <input id="Disconnect" type="button" value="断开">
+       </div>
+   </div>
+</body>
+</html>
+<script type="text/javascript">
+        var href = window.location.href;
+        var str = href.split('=')[1];
+        var item = localStorage.getItem("user:"+str);
+        var parse = JSON.parse(item);
+        var webSocket;
+        var status = 0;
+        var content = document.getElementById('content');
+        var fileImg =  document.getElementById("fileImg");
+        var messageDivQs = document.querySelector("#messageDiv");
+        fileImg.onchange = function () {
+            var ajax = new XMLHttpRequest();
+            ajax.open('post','/Upload/ImageUpload',true);
+            var file = fileImg.files[0];
+
+            if(file.size>1048576*10){//不能大于3M
+                alert('图片不能大于3M')
+                return;
+            }
+
+            if(file!=null){
+                var from  = new FormData();
+                from.append('file',file)
+                from.append('name',document.getElementById('username').value);
+                from.append('userName',parse.data.userName);
+                ajax.send(from)
+            }
+        }
+        function onclickImg(src) {
+            debugger
+            var imageClick = document.getElementById("imageClick");
+            imageClick.innerHTML = '<img onclick="onclickImgNull()" src="'+src+'">'
+        }
+        function onclickImgNull() {
+            var imageClick = document.getElementById("imageClick");
+            imageClick.innerHTML ='';
+        }
+        // if(token==null||token=='null'){
+        if(false){
+            alert("请登录")
+            window.location.href = "/login";
+        }
+        document.querySelector('#out').onclick = function(){
+            if(confirm('您确定要退出吗')){
+                localStorage.removeItem('token:'+str);
+                localStorage.removeItem('user:'+str);
+                location.reload();
+            }
+        }
+
+        //链接
+        document.querySelector("#user").onclick = function () {
+            var username = document.getElementById('username').value;
+            if(status==1){
+                alert('请勿重复链接');
+            }else {
+                webSocket = new WebSocket("ws://127.0.0.1:8080/test/"+username+"/"+parse.data.userName);
+                status=1;
+            }
+        document.onkeydown = function(event){
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            if(e&&e.keyCode == 13){
+                webSocket.send(parse.data.userName+'歷繨韃<li class="liName">'+parse.data.userName+'</li><li class="liContent">'+content.value+'</li>');
+                content.value = '';
+            }
+
+        }
+        //发送
+        document.querySelector('#reply').onclick = function () {
+            webSocket.send(parse.data.userName+'歷繨韃<li class="liName">'+parse.data.userName+'</li><li class="liContent">'+content.value+'</li>');
+            content.value = '';
+        }
+        //断开
+        document.querySelector("#Disconnect").onclick = function(){
+            webSocket.send('<p>《'+parse.data.userName+'》'+'气宇轩昂的走了</p>');
+            webSocket.close();
+        }
+
+        webSocket.onopen = function () {
+            webSocket.send('<p>《'+parse.data.userName+'》'+'降临聊天室</p>');
+            alert("链接成功")
+        }
+        webSocket.onmessage = function (evt) {
+            var evtData = evt.data;
+            var split = evtData.toString().split('歷繨韃');
+            var liName = split[0];
+            if(liName!=null&&liName == parse.data.userName){
+                messageDivQs.innerHTML += split[1];
+            }else if(split.length>1&&liName!=null&&liName!=parse.data.userName){
+                var replace = split[1].replace('liName','liNameThe').replace('liContent','liContentThe');
+                messageDivQs.innerHTML += replace;
+            }else {
+                messageDivQs.innerHTML += evtData;
+                }
+            messageDivQs.scrollTop = messageDivQs.scrollHeight;
+
+        }
+        webSocket.onclose = function () {
+            status=0;
+            alert("链接关闭")
+        }
+    }
+</script>

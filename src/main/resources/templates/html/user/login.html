@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>用户登录</title>
+</head>
+<style>
+    body{
+        background: url("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1699922086,4198451738&fm=11&gp=0.jpg") no-repeat;
+        background-size:100% ;
+    }
+    #div1{
+        text-align: center;
+        margin-top: 10%;
+        margin-left: 35%;
+        margin-right: 35%;
+        padding-top: 1%;
+        height: 250px;
+        background: antiquewhite;
+        border-radius: 50px;
+    }
+    #userName{
+        border-radius: 5px;
+        height: 30px;
+        width: 210px;
+    }
+    #password{
+        border-radius: 5px;
+        height: 30px;
+        width: 210px;
+    }
+    #login{
+        height: 30px;
+        width: 130px;
+        border-radius: 20px;
+        background-color: aqua;
+    }
+    #registered{
+        height: 30px;
+        width: 130px;
+        border-radius: 20px;
+        background-color: aqua;
+    }
+</style>
+<body>
+    <div id="div1" align="center">
+        <h3>请登录</h3>
+        <form id="form1">
+            <input id="userName" type="text" name="userName" placeholder="请输入用户名"><br><br>
+            <input id="password" type="password" name="password" placeholder="请输入密码"><br><br>
+            <input id="login" type="button" value="登录">
+            <input id="registered" type="button" value="注册">
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    document.querySelector('#registered').onclick = function(){
+        window.location.href = '/html/registered';
+    }
+    document.querySelector("#login").onclick = function () {
+        var userName = document.getElementById("userName");
+        var password = document.getElementById("password");
+        if(userName.value==''||password.value==''){
+            alert("用户名或密码为空");
+            return;
+        }
+        var ajax = new XMLHttpRequest();
+        ajax.open("post","/user/login",false)
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send('userName='+userName.value+'&password='+password.value)
+        var parse = JSON.parse(ajax.responseText);
+        if(parse.code!=200){
+            alert(parse.msg)
+            return;
+        }
+        window.localStorage.setItem('user:'+parse.data.id,ajax.responseText);
+        var token = 'user_token'+ parse.data.id;
+        var responseHeader = ajax.getResponseHeader(token);
+        localStorage.setItem('token:'+parse.data.id,responseHeader)
+        window.location.href = '/html/websocket?index='+encodeURI(parse.data.id);
+
+        alert('登录成功')
+    }
+</script>

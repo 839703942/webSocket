@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>用户注册</title>
+</head>
+<style>
+    body{
+        background: url("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1699922086,4198451738&fm=11&gp=0.jpg") no-repeat;
+        background-size:100% ;
+        text-align:center;
+    }
+    #div1{
+        margin-top: 170px;
+        text-align: center;
+        height: 50%;
+        background-color: antiquewhite;
+        width: 40%;
+        margin-left: 30%;
+        border-radius: 5px;
+    }
+    #userName{
+        /*margin-left: 16px;*/
+        border-radius: 3px;
+
+    }
+    #age{
+        border-radius: 3px;
+    }
+    #userName{
+        border-radius: 3px;
+    }
+    #password{
+        border-radius: 3px;
+    }
+    #confirmPassword{
+        border-radius: 3px;
+    }
+    #gender{
+        border-radius: 3px;
+    }
+    #fromId{
+        border-radius: 3px;
+        height: 20px;
+        width: 140px;
+    }
+</style>
+<body>
+    <div id="div1">
+        <form>
+            <h1>用户注册</h1>
+            <input id="userName" name="userName" type="text" placeholder="请输入用户名"><br>用户名不得小于两位大于20位<br><br>
+            <input id="password" name="password" type="password" placeholder="请输入密码"><br>密码20位以内<br><br>
+            <input id="confirmPassword" name="confirmPassword" type="password" placeholder="请确认密码"><br><br>
+            <input id="gender" name="gender" type="radio" checked="checked" value="0"/>男<input name="gender" type="radio" value="1"/>女<br><br>
+            <input id="age" name="age" type="number" placeholder="请输入年龄"><br><br>
+            <input id="fromId" type="button" value="提交">
+        </form>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+    document.querySelector("#fromId").onclick = function () {
+        //取出form表达数据
+        var userName = document.getElementById("userName").value;
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+        var gender = document.getElementById("gender").value;
+        var age = document.getElementById("age").value;
+        if(userName==''||password==''||confirmPassword==''||age==''){
+            alert('请确认信息是否填写完整');
+        }{
+            //ajax请求
+            var ajax = new XMLHttpRequest();
+            ajax.open('POST','/user/registered',false);
+            ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            ajax.send("userName="+userName+"&password="+password+"&confirmPassword="+confirmPassword+"&gender="+gender+"&age1="+age);
+            if(ajax.readyState ==4&&ajax.status == 200){
+                var parse = JSON.parse(ajax.responseText);
+                var code = parse.code;
+                if(code==200){
+                    alert(parse.data);
+                    window.location.href = '/html/login'
+                }else {
+                    alert(parse.msg)
+                }
+            }
+        }
+    }
+</script>

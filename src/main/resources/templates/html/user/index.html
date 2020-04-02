@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <form id="submit-ts">
+            <input id="name" type="text" value="这是值" name="name">
+            <input type="text" name="name" value="sss">
+            <input type="submit">
+        </form>
+    </div>
+    <div>
+        <h1 id="h1">假数据</h1>
+    </div>
+    <div>
+        <form action="/Upload/ImageUpload" method="post" enctype="multipart/form-data">
+            <input type="file" name="files">
+            <input type="text" name="name" value="sss">
+            <input type="submit">
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    document.querySelector('#submit-ts').onclick = function () {
+        var ajax = new XMLHttpRequest();
+        var name = document.getElementById('name').value;
+        ajax.open('POST','tests',true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+        ajax.send('name='+name);
+        ajax.onreadystatechange = function () {
+            if(ajax.readyState ==4&&ajax.status == 200){
+                alert(ajax.responseText)
+                console.log('返回数据成功')
+                console.log(ajax.responseText)
+                document.querySelector("h1").innerHTML = ajax.responseText
+            }
+
+        }
+    }
+</script>

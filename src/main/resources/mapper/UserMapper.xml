@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gj.mapper.UserMapper">
+    <select id="BolUser" parameterType="java.lang.String" resultType="java.lang.Boolean">
+        SELECT COUNT(c.id) FROM `cr_user` c WHERE c.user_name=#{userName};
+    </select>
+
+    <insert id="InsUser" parameterType="com.gj.model.CrUser" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `cr_user`(`user_name`, `password`, `age`, `gender`, `create_time`, `update_time`) VALUES (#{userName},#{password}, #{age}, #{gender}, #{createTime}, #{updateTime})
+    </insert>
+
+    <select id="namePassUser" parameterType="java.lang.String" resultType="com.gj.model.CrUser">
+        SELECT
+        c.id id,
+        c.user_name userName ,
+        c.password,
+        c.age,
+        c.gender,
+        c.create_time createTime,
+        c.update_time updateTime
+
+        FROM cr_user c
+        WHERE c.user_name = #{userName} and c.password = #{password}
+    </select>
+</mapper>

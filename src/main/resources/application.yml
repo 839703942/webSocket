@@ -1,0 +1,37 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: websocket-demo
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/chat_room?characterEncoding=utf-8
+    username: root
+    password:
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    password: imooc
+    port: 6379
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+mybatis:
+  mapper-locations: classpath*:/mapper/*.xml # mapper映射文件
+  type-aliases-package: com.gj.mapper
+oss:
+  access-key-id: LTAI4FhDUPMm7tUHiWBRdPuT
+  access-key-secret: gnGVgstFOjXeRLm8ilaqFjoyOAEJfW
+  aly-url: https://lizhuoru.oss-cn-shenzhen.aliyuncs.com/image/
+  backet-name: lizhuoru
+  #  del-name:
+  endpoint: oss-cn-shenzhen.aliyuncs.com
+  folder: image/
+  imageSize: 10
